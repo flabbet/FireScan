@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Newtonsoft.Json;
 
 namespace FireScan
 {
-    public struct Event
+    public class Event
     {
+        [Key]
+        public int PrimaryId { get; set; }
         public string Status { get; set; }
         [JsonProperty("sub_name")]
         public string SubName { get; set; }
-        public string Type { get; set; }
+        [JsonProperty("type")]
+        public string Action { get; set; }
         [JsonProperty("ts")]
         public int Timestamp { get; set; }
         public int Votes { get; set; }
@@ -21,15 +25,16 @@ namespace FireScan
         [JsonProperty("who")]
         public string Author { get; set; }
         public int Uid { get; set; }
-        public int Id { get; set; }
+        [JsonProperty("primaryId")]
+        public int UserId { get; set; }
         [JsonProperty("icon")]
         public string IconUrl { get; set; }
 
-        public Event(string status, string subName, string type, int timestamp, int votes, int comments, string link, string title, string author, int uid, int id, string iconUrl)
+        public Event(string status, string subName, string action, int timestamp, int votes, int comments, string link, string title, string author, int uid, int primaryId, string iconUrl)
         {
             Status = status;
             SubName = subName;
-            Type = type;
+            Action = action;
             Timestamp = timestamp;
             Votes = votes;
             Comments = comments;
@@ -37,7 +42,7 @@ namespace FireScan
             Title = title;
             Author = author;
             Uid = uid;
-            Id = id;
+            PrimaryId = primaryId;
             IconUrl = iconUrl;
         }
     }

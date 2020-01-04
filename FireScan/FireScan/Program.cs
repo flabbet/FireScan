@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using FireScan.Database;
 using Newtonsoft.Json;
 
 namespace FireScan
@@ -11,7 +13,7 @@ namespace FireScan
 
         public const string Url = @"https://www.meneame.net/backend/sneaker2";
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             string path;
             if (args.Length == 0)
@@ -23,14 +25,23 @@ namespace FireScan
             {
                 path = args[0];
             }
-            WebScanner scanner = new WebScanner(Url);
-            Console.WriteLine($"Downloading data from {Url}");
-            string json = await scanner.DownloadData();
-            WebData webData = JsonConvert.DeserializeObject<WebData>(json);
 
-            string[] lines = FireScanIO.WebDataToLines(webData);
-            File.WriteAllLines(path, lines);
-            Console.WriteLine($"Log was saved in {path}");
+            var autoEvent = new AutoResetEvent(false);
+            var io = new FireScanIO();
+            WebScanner scanner = new WebScanner(Url);
+
+            Timer timer = new Timer(async state =>
+            {
+                Console.WriteLine($"Downloading data from {Url}");
+                string json = await scanner.DownloadData();
+                WebData webData = JsonConvert.DeserializeObject<WebData>(json);
+                io.AddEventsToDatabase(webData.Events);
+
+                string[] lines = FireScanIO.WebDataToLines(webData);
+                File.AppendAllLines(path, lines);
+                Console.WriteLine($"Log was saved in {path}");
+            }, autoEvent, 250, 10000);
+            autoEvent.WaitOne();
         }
     }
 }
