@@ -11,3 +11,5 @@ Firescan is a CLI firehouse scanner application.
 `FireScan` Output file will be saved in default path.
 
 `FireScan <path>` ex. `FireScan "path/to/file.txt"` Log will be saved in path/to/file.txt
+
+To stop, use `CTRL + C`
