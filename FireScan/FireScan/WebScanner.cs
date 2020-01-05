@@ -12,10 +12,10 @@ namespace FireScan
             Url = url;
         }
 
-        public async Task<string> DownloadData()
+        public async Task<string> DownloadData(string requestParameters = "")
         {
             HttpClient client = new HttpClient();
-            return await client.GetStringAsync(Url);
+            return await client.GetStringAsync(Url + requestParameters);
         }
     }
 }
